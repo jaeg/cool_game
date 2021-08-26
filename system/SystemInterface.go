@@ -7,5 +7,5 @@ import (
 
 // System base system interface
 type System interface {
-	Update(*world.Level, *entity.Entity) *world.Level
+	Update(*world.Level, *entity.Entity)
 }

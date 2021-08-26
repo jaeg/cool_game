@@ -10,7 +10,7 @@ type InitiativeSystem struct {
 }
 
 // InitiativeSystem .
-func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) *world.Level {
+func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) {
 
 	if entity.HasComponent("InitiativeComponent") {
 		ic := entity.GetComponent("InitiativeComponent").(*component.InitiativeComponent)
@@ -53,6 +53,4 @@ func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) *wor
 			}
 		}
 	}
-
-	return level
 }

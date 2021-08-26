@@ -9,7 +9,7 @@ type CleanUpSystem struct {
 }
 
 // CleanUpSystem .
-func (s CleanUpSystem) Update(level *world.Level) *world.Level {
+func (s CleanUpSystem) Update(level *world.Level) {
 	for _, entity := range level.Entities {
 		if entity.HasComponent("MyTurnComponent") {
 			entity.RemoveComponent("MyTurnComponent")
@@ -28,5 +28,4 @@ func (s CleanUpSystem) Update(level *world.Level) *world.Level {
 
 	}
 
-	return level
 }

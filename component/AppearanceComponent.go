@@ -2,8 +2,8 @@ package component
 
 // MyTurnComponent .
 type AppearanceComponent struct {
-	SpriteX  int32
-	SpriteY  int32
+	SpriteX  int
+	SpriteY  int
 	Resource string
 	R, G, B  uint8
 }

@@ -12,7 +12,7 @@ type StatusConditionSystem struct {
 var statusConditions = []string{"Poisoned", "Alerted"}
 
 // StatusConditionSystem .
-func (s StatusConditionSystem) Update(level *world.Level, entity *entity.Entity) *world.Level {
+func (s StatusConditionSystem) Update(level *world.Level, entity *entity.Entity) {
 
 	for _, statusCondition := range statusConditions {
 		if entity.HasComponent(statusCondition + "Component") {
@@ -24,5 +24,4 @@ func (s StatusConditionSystem) Update(level *world.Level, entity *entity.Entity)
 		}
 	}
 
-	return level
 }

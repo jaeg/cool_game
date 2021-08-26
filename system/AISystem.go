@@ -18,13 +18,13 @@ type AISystem struct {
 }
 
 // PlayerSystem .
-func (s AISystem) Update(level *world.Level, entity *entity.Entity) *world.Level {
+func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 	if !entity.HasComponent("DeadComponent") {
 		if entity.HasComponent("MyTurnComponent") {
 			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
 
 			if handleDeath(entity) {
-				return level
+				return
 			}
 
 			//Wander AI
@@ -167,6 +167,4 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) *world.Level
 			}
 		}
 	}
-
-	return level
 }

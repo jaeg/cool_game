@@ -3,7 +3,6 @@ package entity
 import (
 	"bufio"
 	"errors"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -15,10 +14,10 @@ import (
 var blueprints = make(map[string][]string)
 
 // FactoryLoad Loads the blueprints for the factory to construct entities
-func FactoryLoad(filename string) {
+func FactoryLoad(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
-		return
+		return err
 	}
 
 	defer file.Close()
@@ -30,7 +29,6 @@ func FactoryLoad(filename string) {
 	entityName := ""
 	for scanner.Scan() {
 		value := scanner.Text()
-		log.Println(value)
 		if value == "" {
 			entityName = ""
 			continue
@@ -43,7 +41,7 @@ func FactoryLoad(filename string) {
 		}
 	}
 
-	log.Println("Finished", blueprints)
+	return nil
 }
 
 func Create(name string, x int, y int) (*Entity, error) {
@@ -66,7 +64,7 @@ func Create(name string, x int, y int) (*Entity, error) {
 				r, _ := strconv.Atoi(params[2])
 				g, _ := strconv.Atoi(params[3])
 				b, _ := strconv.Atoi(params[4])
-				entity.AddComponent(&component.AppearanceComponent{SpriteX: int32(sx), SpriteY: int32(sy), R: uint8(r), G: uint8(g), B: uint8(b)})
+				entity.AddComponent(&component.AppearanceComponent{SpriteX: int(sx), SpriteY: int(sy), R: uint8(r), G: uint8(g), B: uint8(b)})
 
 			case "InitiativeComponent":
 				dv, _ := strconv.Atoi(params[0])
@@ -91,7 +89,6 @@ func Create(name string, x int, y int) (*Entity, error) {
 			case "InteractComponent":
 				interact := &component.InteractComponent{}
 				interact.Message = append(interact.Message, params...)
-				log.Println(interact)
 				entity.AddComponent(interact)
 			case "WanderAIComponent":
 				entity.AddComponent(&component.WanderAIComponent{})
