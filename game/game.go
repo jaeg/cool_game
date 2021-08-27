@@ -16,9 +16,7 @@ import (
 )
 
 type Game struct {
-	title string
-
-	minimap *ebiten.Image
+	title   string
 	level   *world.Level
 	Width   int
 	Height  int
@@ -127,62 +125,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	worldImage := ebiten.NewImage(config.World_W, config.World_H)
 	g.DrawLevel(worldImage, g.CameraX, g.CameraY, config.World_W/config.TileSizeW, config.World_H/config.TileSizeH, false, false)
 
-	/*view := g.level.GetView(g.CameraX, g.CameraY, config.World_W/config.TileSizeW, config.World_H/config.TileSizeH, false, false)
-	for x := 0; x < len(view); x++ {
-		for y := 0; y < len(view[x]); y++ {
-			tX := float64(x * config.SpriteSizeW)
-			tY := float64(y * config.SpriteSizeH)
-			tile := view[x][y]
-
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(tX, tY)
-			op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
-
-			if tile == nil {
-				worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(0, 112, config.SpriteSizeW, 112+config.SpriteSizeH)).(*ebiten.Image), op)
-				continue
-			} else {
-				worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(tile.SpriteX, tile.SpriteY, tile.SpriteX+config.SpriteSizeW, tile.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
-			}
-
-			//Draw entity on tile.
-			entity := g.level.GetEntityAt(tile.X, tile.Y)
-			if entity != nil {
-				if entity.HasComponent("AppearanceComponent") {
-					ac := entity.GetComponent("AppearanceComponent").(*component.AppearanceComponent)
-					dir := 0
-					if entity.HasComponent("DirectionComponent") {
-						dc := entity.GetComponent("DirectionComponent").(*component.DirectionComponent)
-						dir = dc.Direction
-					}
-
-					op := &ebiten.DrawImageOptions{}
-					op.GeoM.Translate(tX, tY)
-					op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
-
-					if entity.HasComponent("InanimateComponent") {
-						worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
-					} else {
-						worldImage.DrawImage(g.characterTileset.SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
-					}
-				}
-			}
-		}
-	}*/
 	screen.DrawImage(worldImage, nil)
-	g.gui.DrawUI(screen, g)
-
-	g.gui.DrawCursor(screen, g)
-
-	//Draw Minimap
-	op := &ebiten.DrawImageOptions{}
-	//op.GeoM.Scale(.2, .2)
-	op.GeoM.Translate(config.World_W+5, 16)
-	if g.minimap == nil {
-		g.minimap = g.GetMinimap(0, 0, config.WorldGenSizeW, config.WorldGenSizeH, 150, 150)
-	}
-	//g.minimap = g.GetMinimap(g.CameraX, g.CameraY, 300, 300, 150, 150)
-	screen.DrawImage(g.minimap, op)
+	g.gui.Draw(screen, g)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
