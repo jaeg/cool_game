@@ -10,14 +10,13 @@ import (
 )
 
 const foodMinimum = 100
-const hostileMinimum = 40
+const hostileMinimum = 100
 const foodInitial = 200
 const hostileInitial = 200
 
 var hostiles = []string{"snake", "skeleton", "spider", "zombie"}
 var rareHostiles = []string{"giant", "centaur", "griffon"}
 var epicHostiles = []string{"darkknight"}
-
 var foods = []string{"rat", "dog", "cat", "roach"}
 
 //GameMaster The Game master manages what's going on in the game world and balances the difficulty.

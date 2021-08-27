@@ -1,39 +1,33 @@
 package game
 
 import (
-	"errors"
-	"fmt"
 	"image"
 	_ "image/png"
-	"log"
 	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/jaeg/cool_game/component"
 	"github.com/jaeg/cool_game/config"
 	"github.com/jaeg/cool_game/entity"
+	"github.com/jaeg/cool_game/resource"
 	"github.com/jaeg/cool_game/system"
 	"github.com/jaeg/cool_game/world"
 )
 
 type Game struct {
-	title            string
-	worldTileset     *ebiten.Image
-	characterTileset *ebiten.Image
-	uiTileset        *ebiten.Image
-	fxTileset        *ebiten.Image
-	minimap          *ebiten.Image
-	level            *world.Level
-	Width            int
-	Height           int
-	CameraX          int
-	CameraY          int
-	keys             []ebiten.Key
-	gui              *GUI
-	systems          []system.System
-	gm               *GameMaster
+	title string
+
+	minimap *ebiten.Image
+	level   *world.Level
+	Width   int
+	Height  int
+	CameraX int
+	CameraY int
+	keys    []ebiten.Key
+	gui     *GUI
+	systems []system.System
+	gm      *GameMaster
 }
 
 func NewGame(title string, width int, height int) (*Game, error) {
@@ -42,29 +36,25 @@ func NewGame(title string, width int, height int) (*Game, error) {
 	ebiten.SetWindowTitle(title)
 
 	//Load assets
-	img, err := LoadImage("assets/tiny_dungeon_world.png")
+	err := resource.LoadImageAsTexture("world", "assets/tiny_dungeon_world.png")
 	if err != nil {
 		return nil, err
 	}
-	game.worldTileset = img
 
-	img, err = LoadImage("assets/tiny_dungeon_monsters.png")
+	err = resource.LoadImageAsTexture("characters", "assets/tiny_dungeon_monsters.png")
 	if err != nil {
 		return nil, err
 	}
-	game.characterTileset = img
 
-	img, err = LoadImage("assets/tiny_dungeon_interface.png")
+	err = resource.LoadImageAsTexture("ui", "assets/tiny_dungeon_interface.png")
 	if err != nil {
 		return nil, err
 	}
-	game.uiTileset = img
 
-	img, err = LoadImage("assets/tiny_dungeon_fx.png")
+	err = resource.LoadImageAsTexture("fx", "assets/tiny_dungeon_fx.png")
 	if err != nil {
 		return nil, err
 	}
-	game.fxTileset = img
 
 	game.level = world.NewOverworldSection(config.WorldGenSizeW, config.WorldGenSizeH)
 
@@ -199,21 +189,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return g.Width, g.Height
 }
 
-func LoadImage(path string) (*ebiten.Image, error) {
-	imgFile, err := ebitenutil.OpenFile(path)
-	if err != nil {
-		fmt.Println("Error opening tileset " + path)
-		return nil, errors.New("error opening tileset " + path)
-	}
-
-	img, _, err := image.Decode(imgFile)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-	return ebiten.NewImageFromImage(img), nil
-}
-
 func (g *Game) DrawLevel(screen *ebiten.Image, aX int, aY int, width int, height int, blind bool, centered bool) {
 	left := aX - width/2
 	right := aX + width/2
@@ -248,10 +223,10 @@ func (g *Game) DrawLevel(screen *ebiten.Image, aX int, aY int, width int, height
 			op.GeoM.Translate(tX, tY)
 
 			if tile == nil {
-				screen.DrawImage(g.worldTileset.SubImage(image.Rect(0, 112, config.SpriteSizeW, 112+config.SpriteSizeH)).(*ebiten.Image), op)
+				screen.DrawImage(resource.Textures["world"].SubImage(image.Rect(0, 112, config.SpriteSizeW, 112+config.SpriteSizeH)).(*ebiten.Image), op)
 				continue
 			} else {
-				screen.DrawImage(g.worldTileset.SubImage(image.Rect(tile.SpriteX, tile.SpriteY, tile.SpriteX+config.SpriteSizeW, tile.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
+				screen.DrawImage(resource.Textures["world"].SubImage(image.Rect(tile.SpriteX, tile.SpriteY, tile.SpriteX+config.SpriteSizeW, tile.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 			}
 
 			//Draw entity on tile.  We do this here to prevent yet another loop. ;)
@@ -286,9 +261,9 @@ func (g *Game) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x float64
 
 			// TODO - I don't like this.  The appearance component should specify the resource.
 			if entity.HasComponent("InanimateComponent") {
-				screen.DrawImage(g.worldTileset.SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
+				screen.DrawImage(resource.Textures["world"].SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 			} else {
-				screen.DrawImage(g.characterTileset.SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
+				screen.DrawImage(resource.Textures["characters"].SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 			}
 
 			//Draw FX
@@ -298,7 +273,7 @@ func (g *Game) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x float64
 					entity.RemoveComponent("AttackComponent")
 				} else {
 					xOffset := attackC.SpriteX + (attackC.Frame * config.SpriteSizeW)
-					screen.DrawImage(g.fxTileset.SubImage(image.Rect(xOffset, attackC.SpriteY, xOffset+config.SpriteSizeW, attackC.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
+					screen.DrawImage(resource.Textures["fx"].SubImage(image.Rect(xOffset, attackC.SpriteY, xOffset+config.SpriteSizeW, attackC.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 					attackC.Frame++
 				}
 			}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jaeg/cool_game/config"
+	"github.com/jaeg/cool_game/resource"
 )
 
 type Button struct {
@@ -40,7 +41,7 @@ func (b Button) Draw(screen *ebiten.Image, game *Game) {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(x), float64(y))
 			//s.drawSpriteEx(int32(x), int32(y), sX, sY, 32, 32, 255, 255, 255, 255, s.uiTexture)
-			screen.DrawImage(game.uiTileset.SubImage(image.Rect(sX, sY, sX+config.SpriteSizeW, sY+config.SpriteSizeH)).(*ebiten.Image), op)
+			screen.DrawImage(resource.Textures["ui"].SubImage(image.Rect(sX, sY, sX+config.SpriteSizeW, sY+config.SpriteSizeH)).(*ebiten.Image), op)
 
 		}
 	}
@@ -119,7 +120,7 @@ func (g *GUI) DrawUI(screen *ebiten.Image, game *Game) {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(x), float64(y))
 			//s.drawSpriteEx(int32(x), int32(y), sX, sY, 32, 32, 255, 255, 255, 255, s.uiTexture)
-			screen.DrawImage(game.uiTileset.SubImage(image.Rect(sX, sY, sX+config.SpriteSizeW, sY+config.SpriteSizeH)).(*ebiten.Image), op)
+			screen.DrawImage(resource.Textures["ui"].SubImage(image.Rect(sX, sY, sX+config.SpriteSizeW, sY+config.SpriteSizeH)).(*ebiten.Image), op)
 
 		}
 	}
@@ -146,10 +147,10 @@ func (g *Game) GetMinimap(sX int, sY int, width int, height int, imageWidth int,
 			//op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
 
 			if tile == nil {
-				worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(0, 112, config.SpriteSizeW, 112+config.SpriteSizeH)).(*ebiten.Image), op)
+				worldImage.DrawImage(resource.Textures["world"].SubImage(image.Rect(0, 112, config.SpriteSizeW, 112+config.SpriteSizeH)).(*ebiten.Image), op)
 				continue
 			} else {
-				worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(tile.SpriteX, tile.SpriteY, tile.SpriteX+config.SpriteSizeW, tile.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
+				worldImage.DrawImage(resource.Textures["world"].SubImage(image.Rect(tile.SpriteX, tile.SpriteY, tile.SpriteX+config.SpriteSizeW, tile.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 			}
 		}
 	}
@@ -172,11 +173,11 @@ func (g *GUI) DrawCursor(screen *ebiten.Image, game *Game) {
 
 	if cX > config.World_W {
 		op.GeoM.Translate(float64(cX), float64(cY))
-		screen.DrawImage(game.uiTileset.SubImage(image.Rect(64, cursorY, 64+config.SpriteSizeW, cursorY+config.SpriteSizeH)).(*ebiten.Image), op)
+		screen.DrawImage(resource.Textures["ui"].SubImage(image.Rect(64, cursorY, 64+config.SpriteSizeW, cursorY+config.SpriteSizeH)).(*ebiten.Image), op)
 		//s.drawSprite(int32(g.Cursor.X), int32(g.Cursor.Y), 64, cursorY, 255, 255, 255, g.uiTexture) //Cursor?
 	} else {
 		//This works because the math is being done on ints then turned into a float giving us a nice even number.
 		op.GeoM.Translate(float64((cX/config.TileSizeW)*config.TileSizeW), float64((cY/config.TileSizeH)*config.TileSizeH))
-		screen.DrawImage(game.uiTileset.SubImage(image.Rect(128, cursorY, 128+config.SpriteSizeW, cursorY+config.SpriteSizeH)).(*ebiten.Image), op)
+		screen.DrawImage(resource.Textures["ui"].SubImage(image.Rect(128, cursorY, 128+config.SpriteSizeW, cursorY+config.SpriteSizeH)).(*ebiten.Image), op)
 	}
 }
