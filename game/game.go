@@ -31,28 +31,13 @@ type Game struct {
 	CameraX          int
 	CameraY          int
 	keys             []ebiten.Key
-	Cursor           *Cursor
+	gui              *GUI
 	systems          []system.System
 	gm               *GameMaster
 }
 
-type Cursor struct {
-	X     int
-	Y     int
-	State int
-}
-
-func (c *Cursor) Update() {
-	c.State = 0
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		c.State = 1
-	}
-
-	c.X, c.Y = ebiten.CursorPosition()
-}
-
 func NewGame(title string, width int, height int) (*Game, error) {
-	game := &Game{Width: width, Height: height, title: title, Cursor: &Cursor{}}
+	game := &Game{Width: width, Height: height, title: title, gui: NewGUI()}
 	ebiten.SetWindowSize(width, height)
 	ebiten.SetWindowTitle(title)
 
@@ -130,7 +115,7 @@ func (g *Game) Update() error {
 		}
 	}
 
-	g.Cursor.Update()
+	g.gui.Update(g)
 
 	fps := ebiten.CurrentFPS()
 	ebiten.SetWindowTitle(g.title + " FPS: " + strconv.FormatFloat(fps, 'f', 1, 64))
@@ -195,9 +180,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}*/
 	screen.DrawImage(worldImage, nil)
-	g.DrawUI(screen)
+	g.gui.DrawUI(screen, g)
 
-	g.DrawCursor(screen)
+	g.gui.DrawCursor(screen, g)
 
 	//Draw Minimap
 	op := &ebiten.DrawImageOptions{}
@@ -227,89 +212,6 @@ func LoadImage(path string) (*ebiten.Image, error) {
 		return nil, err
 	}
 	return ebiten.NewImageFromImage(img), nil
-}
-
-func (g *Game) DrawUI(screen *ebiten.Image) {
-	//Draw menu
-	for x := config.World_W; x < g.Width; x += 16 {
-		for y := 0; y < g.Height; y += 16 {
-			sX := 127
-			sY := 16
-			//Left Top
-			if x == config.World_W && y == 0 {
-				sY = 0
-				sX = 144
-			} else if x == g.Width-16 && y == 0 { //Right top
-				sY = 0
-				sX = 176
-			} else if x == config.World_W && y == g.Height-16 { //Left bottom
-				sY = 32
-				sX = 144
-			} else if x == g.Width-16 && y == g.Height-16 { //Right bottom
-				sY = 32
-				sX = 176
-			}
-
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(x), float64(y))
-			//s.drawSpriteEx(int32(x), int32(y), sX, sY, 32, 32, 255, 255, 255, 255, s.uiTexture)
-			screen.DrawImage(g.uiTileset.SubImage(image.Rect(sX, sY, sX+config.SpriteSizeW, sY+config.SpriteSizeH)).(*ebiten.Image), op)
-
-		}
-	}
-}
-
-// GetMinimap
-// Generates a minimap image of specified size and returns the image.
-// Width and Height are in tiles not pixels.
-func (g *Game) GetMinimap(sX int, sY int, width int, height int, imageWidth int, imageHeight int) *ebiten.Image {
-	worldImage := ebiten.NewImage(imageWidth, imageHeight)
-
-	view := g.level.GetView(sX, sY, width, height, false, false)
-	for x := 0; x < len(view); x++ {
-		for y := 0; y < len(view[x]); y++ {
-			tX := float64(x * imageWidth / width)
-			tY := float64(y * imageHeight / height)
-			tile := view[x][y]
-
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(tX, tY)
-			//op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
-
-			if tile == nil {
-				worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(0, 112, config.SpriteSizeW, 112+config.SpriteSizeH)).(*ebiten.Image), op)
-				continue
-			} else {
-				worldImage.DrawImage(g.worldTileset.SubImage(image.Rect(tile.SpriteX, tile.SpriteY, tile.SpriteX+config.SpriteSizeW, tile.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
-			}
-		}
-	}
-
-	return worldImage
-}
-
-func (g *Game) DrawCursor(screen *ebiten.Image) {
-	//Cursor logic
-
-	//pX := g.Cursor.X/config.TileSizeW + g.CameraX
-	//pY := g.Cursor.Y/config.TileSizeW + g.CameraY
-	var cursorY = 128
-	if g.Cursor.State == 1 {
-		cursorY = 144
-	}
-
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
-
-	if g.Cursor.X > config.World_W {
-		op.GeoM.Translate(float64(g.Cursor.X), float64(g.Cursor.Y))
-		screen.DrawImage(g.uiTileset.SubImage(image.Rect(64, cursorY, 64+config.SpriteSizeW, cursorY+config.SpriteSizeH)).(*ebiten.Image), op)
-		//s.drawSprite(int32(g.Cursor.X), int32(g.Cursor.Y), 64, cursorY, 255, 255, 255, g.uiTexture) //Cursor?
-	} else {
-		//This works because the math is being done on ints then turned into a float giving us a nice even number.
-		op.GeoM.Translate(float64((g.Cursor.X/config.TileSizeW)*config.TileSizeW), float64((g.Cursor.Y/config.TileSizeH)*config.TileSizeH))
-		screen.DrawImage(g.uiTileset.SubImage(image.Rect(128, cursorY, 128+config.SpriteSizeW, cursorY+config.SpriteSizeH)).(*ebiten.Image), op)
-	}
 }
 
 func (g *Game) DrawLevel(screen *ebiten.Image, aX int, aY int, width int, height int, blind bool, centered bool) {
@@ -374,12 +276,12 @@ func (g *Game) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x float64
 			}
 
 			op := &ebiten.DrawImageOptions{}
+
 			op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
-
 			if entity.HasComponent("DeadComponent") {
-				op.GeoM.Rotate(180) // TODO - This isn't really accurate
+				op.GeoM.Scale(1, -1)
+				op.GeoM.Translate(0, config.TileSizeH)
 			}
-
 			op.GeoM.Translate(x, y)
 
 			// TODO - I don't like this.  The appearance component should specify the resource.
