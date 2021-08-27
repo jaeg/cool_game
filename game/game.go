@@ -18,8 +18,6 @@ import (
 type Game struct {
 	title   string
 	level   *world.Level
-	Width   int
-	Height  int
 	CameraX int
 	CameraY int
 	keys    []ebiten.Key
@@ -28,9 +26,9 @@ type Game struct {
 	gm      *GameMaster
 }
 
-func NewGame(title string, width int, height int) (*Game, error) {
-	game := &Game{Width: width, Height: height, title: title, gui: NewGUI()}
-	ebiten.SetWindowSize(width, height)
+func NewGame(title string) (*Game, error) {
+	game := &Game{title: title, gui: NewGUI()}
+	ebiten.SetWindowSize(config.ScreenWidth, config.ScreenHeight)
 	ebiten.SetWindowTitle(title)
 
 	//Load assets
@@ -87,7 +85,7 @@ func (g *Game) Update() error {
 			}
 		}
 		if k.String() == "S" {
-			if (g.CameraY + g.Height/config.TileSizeH) < config.WorldGenSizeH {
+			if (g.CameraY + config.ScreenHeight/config.TileSizeH) < config.WorldGenSizeH {
 				g.CameraY++
 			}
 		}
@@ -97,7 +95,7 @@ func (g *Game) Update() error {
 			}
 		}
 		if k.String() == "D" {
-			if (g.CameraX + g.Width/config.TileSizeW) < config.WorldGenSizeW {
+			if (g.CameraX + config.ScreenWidth/config.TileSizeW) < config.WorldGenSizeW {
 				g.CameraX++
 			}
 		}
@@ -130,7 +128,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return g.Width, g.Height
+	return config.ScreenWidth, config.ScreenHeight
 }
 
 func (g *Game) DrawLevel(screen *ebiten.Image, aX int, aY int, width int, height int, blind bool, centered bool) {

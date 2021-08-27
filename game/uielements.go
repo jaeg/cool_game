@@ -18,7 +18,7 @@ type Button struct {
 	IconY  int
 }
 
-func (b Button) Draw(screen *ebiten.Image, game *Game) {
+func (b Button) Draw(screen *ebiten.Image) {
 	for x := b.X; x < b.X+b.Width; x += 16 {
 		for y := b.Y; y < b.Y+b.Height; y += 16 {
 			sX := 127

@@ -44,21 +44,21 @@ func (g GUIViewMain) Update(game *Game) GUIViewInterface {
 
 func (g GUIViewMain) Draw(screen *ebiten.Image, game *Game) {
 	//Draw sidebar
-	for x := config.World_W; x < game.Width; x += 16 {
-		for y := 0; y < game.Height; y += 16 {
+	for x := config.World_W; x < config.ScreenWidth; x += 16 {
+		for y := 0; y < config.ScreenHeight; y += 16 {
 			sX := 127
 			sY := 16
 			//Left Top
 			if x == config.World_W && y == 0 {
 				sY = 0
 				sX = 144
-			} else if x == game.Width-16 && y == 0 { //Right top
+			} else if x == config.ScreenWidth-16 && y == 0 { //Right top
 				sY = 0
 				sX = 176
-			} else if x == config.World_W && y == game.Height-16 { //Left bottom
+			} else if x == config.World_W && y == config.ScreenHeight-16 { //Left bottom
 				sY = 32
 				sX = 144
-			} else if x == game.Width-16 && y == game.Height-16 { //Right bottom
+			} else if x == config.ScreenWidth-16 && y == config.ScreenHeight-16 { //Right bottom
 				sY = 32
 				sX = 176
 			}
@@ -80,6 +80,6 @@ func (g GUIViewMain) Draw(screen *ebiten.Image, game *Game) {
 
 	//Draw buttons
 	for _, b := range g.Buttons {
-		b.Draw(screen, game)
+		b.Draw(screen)
 	}
 }

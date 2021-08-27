@@ -7,14 +7,9 @@ import (
 	"github.com/jaeg/cool_game/game"
 )
 
-const (
-	screenWidth  = 800
-	screenHeight = 640
-)
-
 func main() {
 	entity.FactoryLoad("entities.blueprints")
-	g, err := game.NewGame("Cool Game", screenWidth, screenHeight)
+	g, err := game.NewGame("Cool Game")
 	if err != nil {
 		log.Fatal(err)
 	}

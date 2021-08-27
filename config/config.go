@@ -17,3 +17,8 @@ const World_H = 640
 
 const WorldGenSizeW = 500
 const WorldGenSizeH = 500
+
+const ScreenWidth = 800
+const ScreenHeight = 640
+
+const Title = "Cool Game"
