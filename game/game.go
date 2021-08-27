@@ -259,8 +259,9 @@ func (g *Game) DrawUI(screen *ebiten.Image) {
 	}
 }
 
-//GetMinimap
-//Width and Height is in number of tiles.
+// GetMinimap
+// Generates a minimap image of specified size and returns the image.
+// Width and Height are in tiles not pixels.
 func (g *Game) GetMinimap(sX int, sY int, width int, height int, imageWidth int, imageHeight int) *ebiten.Image {
 	worldImage := ebiten.NewImage(imageWidth, imageHeight)
 
@@ -376,11 +377,12 @@ func (g *Game) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x float64
 			op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
 
 			if entity.HasComponent("DeadComponent") {
-				op.GeoM.Rotate(180)
+				op.GeoM.Rotate(180) // TODO - This isn't really accurate
 			}
 
 			op.GeoM.Translate(x, y)
 
+			// TODO - I don't like this.  The appearance component should specify the resource.
 			if entity.HasComponent("InanimateComponent") {
 				screen.DrawImage(g.worldTileset.SubImage(image.Rect(ac.SpriteX+dir*config.SpriteSizeW, ac.SpriteY, ac.SpriteX+config.SpriteSizeW+dir*config.SpriteSizeW, ac.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 			} else {
