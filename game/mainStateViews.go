@@ -6,42 +6,29 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jaeg/cool_game/config"
 	"github.com/jaeg/cool_game/resource"
+	"github.com/jaeg/cool_game/state"
+	"github.com/jaeg/cool_game/ui"
 )
-
-//Base GUIView interface.
-//Since we are dealing with interfaces the GUIView is being passed around by value instead of reference
-type GUIViewInterface interface {
-	Update(game *Game)
-	Draw(screen *ebiten.Image, game *Game)
-}
-
-//GUIViewBase gives views some basic functionality when inherited.
-type GUIViewBase struct {
-	Buttons []*Button
-}
-
-func (g *GUIViewBase) AddButton(button *Button) {
-	if g.Buttons == nil {
-		g.Buttons = make([]*Button, 0)
-	}
-	g.Buttons = append(g.Buttons, button)
-}
 
 // Main gui
 type GUIViewMain struct {
-	GUIViewBase
+	ui.GUIViewBase
 	minimap *ebiten.Image
 	x       int
 }
 
-func (g *GUIViewMain) Update(game *Game) {
+func (g *GUIViewMain) Update(s state.StateInterface) {
 	g.x++
-	if g.minimap == nil {
-		g.minimap = game.GetMinimap(0, 0, config.WorldGenSizeW, config.WorldGenSizeH, 150, 150)
+	mainState, ok := s.(*MainState)
+	if ok {
+		if g.minimap == nil {
+			g.minimap = mainState.GetMinimap(0, 0, config.WorldGenSizeW, config.WorldGenSizeH, 150, 150)
+		}
 	}
+
 }
 
-func (g *GUIViewMain) Draw(screen *ebiten.Image, game *Game) {
+func (g *GUIViewMain) Draw(screen *ebiten.Image, s state.StateInterface) {
 	//Draw sidebar
 	for x := config.World_W; x < config.ScreenWidth; x += 16 {
 		for y := 0; y < config.ScreenHeight; y += 16 {
