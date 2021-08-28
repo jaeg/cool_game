@@ -14,7 +14,7 @@ type GUI struct {
 }
 
 func NewGUI() *GUI {
-	mainState := GUIViewMain{}
+	mainState := &GUIViewMain{}
 	button := &Button{X: 16, Y: 16, Width: 64, Height: 32, Text: "Test"}
 	mainState.AddButton(button)
 	return &GUI{State: mainState}
@@ -22,7 +22,7 @@ func NewGUI() *GUI {
 
 func (g *GUI) Update(game *Game) {
 	if g.State != nil {
-		g.State = g.State.Update(game)
+		g.State.Update(game)
 	}
 }
 

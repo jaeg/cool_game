@@ -11,7 +11,7 @@ import (
 //Base GUIView interface.
 //Since we are dealing with interfaces the GUIView is being passed around by value instead of reference
 type GUIViewInterface interface {
-	Update(game *Game) GUIViewInterface
+	Update(game *Game)
 	Draw(screen *ebiten.Image, game *Game)
 }
 
@@ -34,15 +34,14 @@ type GUIViewMain struct {
 	x       int
 }
 
-func (g GUIViewMain) Update(game *Game) GUIViewInterface {
+func (g *GUIViewMain) Update(game *Game) {
 	g.x++
 	if g.minimap == nil {
 		g.minimap = game.GetMinimap(0, 0, config.WorldGenSizeW, config.WorldGenSizeH, 150, 150)
 	}
-	return g
 }
 
-func (g GUIViewMain) Draw(screen *ebiten.Image, game *Game) {
+func (g *GUIViewMain) Draw(screen *ebiten.Image, game *Game) {
 	//Draw sidebar
 	for x := config.World_W; x < config.ScreenWidth; x += 16 {
 		for y := 0; y < config.ScreenHeight; y += 16 {
