@@ -22,3 +22,5 @@ const ScreenWidth = 800
 const ScreenHeight = 640
 
 const Title = "Cool Game"
+
+const DPI = 72

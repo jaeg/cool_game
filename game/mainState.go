@@ -26,7 +26,11 @@ type MainState struct {
 }
 
 func NewMainState() (*MainState, error) {
-	s := &MainState{gui: ui.NewGUI(&GUIViewMain{})}
+	b := ui.NewButton(16, 16, "Click Me")
+	mainView := &GUIViewMain{}
+
+	mainView.AddButton(b)
+	s := &MainState{gui: ui.NewGUI(mainView)}
 
 	s.level = world.NewOverworldSection(config.WorldGenSizeW, config.WorldGenSizeH)
 

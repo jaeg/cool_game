@@ -40,6 +40,11 @@ func NewGame(title string) (*Game, error) {
 		return nil, err
 	}
 
+	err = resource.LoadFont("main", "assets/Roboto-Regular.ttf")
+	if err != nil {
+		return nil, err
+	}
+
 	game.CurrentState, err = NewMainState()
 	if err != nil {
 		return nil, err
