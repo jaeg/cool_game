@@ -118,7 +118,7 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 
 				if move(entity, level, deltaX, deltaY) {
 					entityHit := level.GetSolidEntityAt(pc.GetX()+deltaX, pc.GetY()+deltaY)
-					if entityHit != nil {
+					if entityHit != nil && entityHit != entity {
 						if entityHit != entity {
 							hit(entity, entityHit)
 							eat(entity, entityHit)

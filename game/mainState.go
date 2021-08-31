@@ -140,7 +140,9 @@ func (s *MainState) DrawLevel(screen *ebiten.Image, aX int, aY int, width int, h
 
 			//Draw entity on tile.  We do this here to prevent yet another loop. ;)
 			entity := s.level.GetEntityAt(tile.X, tile.Y)
-			s.DrawEntity(screen, entity, tX, tY)
+			if entity != nil {
+				s.DrawEntity(screen, entity, tX, tY)
+			}
 
 			screenY++
 		}
@@ -182,12 +184,14 @@ func (s *MainState) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x fl
 					entity.RemoveComponent("AttackComponent")
 				} else {
 					xOffset := attackC.SpriteX + (attackC.Frame * config.SpriteSizeW)
+					op := &ebiten.DrawImageOptions{}
+					op.GeoM.Scale(float64(config.TileSizeW/config.SpriteSizeW), float64(config.TileSizeH/config.SpriteSizeH))
+					op.GeoM.Translate(x, y)
 					screen.DrawImage(resource.Textures["fx"].SubImage(image.Rect(xOffset, attackC.SpriteY, xOffset+config.SpriteSizeW, attackC.SpriteY+config.SpriteSizeH)).(*ebiten.Image), op)
 					attackC.Frame++
 				}
 			}
 		}
-
 	}
 }
 
