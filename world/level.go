@@ -6,11 +6,11 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/jaeg/cool_game/component"
-	"github.com/jaeg/cool_game/entity"
-
 	"github.com/aquilax/go-perlin"
 	"github.com/beefsack/go-astar"
+	"github.com/jaeg/cool_game/components"
+	"github.com/jaeg/cool_game/factory"
+	"github.com/jaeg/game-engine/entity"
 )
 
 const (
@@ -230,7 +230,7 @@ func (level *Level) GetTileAt(x int, y int) (tile *Tile) {
 func (level *Level) PlaceEntity(x int, y int, entity *entity.Entity) {
 	if x < level.Width && y < level.Height && x >= 0 && y >= 0 {
 		tile := &level.data[x][y]
-		pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+		pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 		oldTile := &level.data[pc.GetX()][pc.GetY()]
 		for i := 0; i < len(oldTile.Entities); i++ {
 			if oldTile.Entities[i] == entity {
@@ -290,7 +290,7 @@ func (level *Level) GetEntitiesAround(x int, y int, width int, height int) (enti
 					entity := tile.Entities[0]
 
 					if entity.HasComponent("PositionComponent") {
-						pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+						pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 						if pc.GetX() >= left && pc.GetX() <= right && pc.GetY() >= up && pc.GetY() <= down {
 							entities = append(entities, entity)
 						}
@@ -314,7 +314,7 @@ func (level *Level) GetPlayersAround(x int, y int, width int, height int) (entit
 		entity := level.Entities[i]
 
 		if entity.HasComponent("PositionComponent") {
-			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+			pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 			if pc.GetX() >= left && pc.GetX() <= right && pc.GetY() >= up && pc.GetY() <= down {
 				if entity.HasComponent("PlayerComponent") {
 					entities = append(entities, entity)
@@ -358,7 +358,7 @@ func (level *Level) GetInteractableEntityAt(x int, y int) (entity *entity.Entity
 		entity = level.Entities[i]
 		if entity.HasComponent("PositionComponent") {
 			if entity.HasComponent("InteractComponent") {
-				pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+				pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 				if pc.GetX() == x && pc.GetY() == y {
 					return
 				}
@@ -379,7 +379,7 @@ func (level *Level) NextHour() {
 func (level *Level) AddEntity(entity *entity.Entity) {
 	level.Entities = append(level.Entities, entity)
 	if entity.HasComponent("PositionComponent") {
-		pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+		pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 		x := pc.GetX()
 		y := pc.GetY()
 		level.PlaceEntity(x, y, entity)
@@ -388,7 +388,7 @@ func (level *Level) AddEntity(entity *entity.Entity) {
 
 func (level *Level) RemoveEntity(entity *entity.Entity) {
 	if entity.HasComponent("PositionComponent") {
-		pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+		pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 		x := pc.GetX()
 		y := pc.GetY()
 
@@ -475,7 +475,7 @@ func (level *Level) CreateClusterOfTrees(x int, y int, size int) {
 		if level.GetTileAt(x, y) != nil {
 			tile := level.GetTileAt(x, y)
 			if tile.Type != 2 && tile.Type != 4 && level.GetEntityAt(x, y) == nil {
-				tree, err := entity.Create("tree", x, y)
+				tree, err := factory.Create("tree", x, y)
 				if err == nil {
 					level.AddEntity(tree)
 				}
@@ -517,7 +517,7 @@ func (level *Level) CreateClusterOfGoblins(x int, y int, size int) {
 		if level.GetTileAt(x, y) != nil {
 			tile := level.GetTileAt(x, y)
 			if tile.Type != 2 && tile.Type != 4 && level.GetEntityAt(x, y) == nil {
-				goblin, err := entity.Create("goblin", x, y)
+				goblin, err := factory.Create("goblin", x, y)
 				if err == nil {
 					level.AddEntity(goblin)
 				}

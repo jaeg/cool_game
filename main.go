@@ -3,11 +3,13 @@ package main
 import (
 	"log"
 
-	"github.com/jaeg/cool_game/entity"
+	"github.com/jaeg/cool_game/factory"
 	"github.com/jaeg/cool_game/game"
+	"github.com/jaeg/game-engine/entity"
 )
 
 func main() {
+	factory.FactoryLoad("entities.blueprints")
 	entity.FactoryLoad("entities.blueprints")
 	g, err := game.NewGame("Cool Game")
 	if err != nil {

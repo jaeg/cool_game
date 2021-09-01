@@ -5,7 +5,7 @@ import (
 	"math/rand"
 
 	"github.com/jaeg/cool_game/config"
-	"github.com/jaeg/cool_game/entity"
+	"github.com/jaeg/cool_game/factory"
 	"github.com/jaeg/cool_game/world"
 )
 
@@ -48,7 +48,7 @@ func (gm *GameMaster) Init(level *world.Level) {
 			continue
 		}
 		blueprint := foods[getRandom(0, len(foods))]
-		food, err := entity.Create(blueprint, x, y)
+		food, err := factory.Create(blueprint, x, y)
 		if err == nil {
 			level.AddEntity(food)
 		}
@@ -78,7 +78,7 @@ func (gm *GameMaster) Init(level *world.Level) {
 			log.Println("Spawn a rare hostile enemy!")
 			blueprint = rareHostiles[getRandom(0, len(rareHostiles))]
 		}
-		food, err := entity.Create(blueprint, x, y)
+		food, err := factory.Create(blueprint, x, y)
 		if err == nil {
 			level.AddEntity(food)
 		}
@@ -128,7 +128,7 @@ func (gm *GameMaster) Update() {
 				continue
 			}
 			blueprint := foods[getRandom(0, len(foods))]
-			food, err := entity.Create(blueprint, x, y)
+			food, err := factory.Create(blueprint, x, y)
 			if err == nil {
 				gm.level.AddEntity(food)
 			}
@@ -167,7 +167,7 @@ func (gm *GameMaster) Update() {
 					blueprint = epicHostiles[getRandom(0, len(epicHostiles))]
 				}
 			}
-			food, err := entity.Create(blueprint, x, y)
+			food, err := factory.Create(blueprint, x, y)
 			if err == nil {
 				gm.level.AddEntity(food)
 			}
@@ -192,7 +192,7 @@ func (gm *GameMaster) Update() {
 				}
 			}
 			if tries < 10 {
-				dragon, err := entity.Create("dragon", x, y)
+				dragon, err := factory.Create("dragon", x, y)
 				if err == nil {
 					gm.level.AddEntity(dragon)
 				}

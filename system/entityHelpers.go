@@ -1,9 +1,9 @@
 package system
 
 import (
-	"github.com/jaeg/cool_game/component"
-	"github.com/jaeg/cool_game/entity"
+	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/world"
+	"github.com/jaeg/game-engine/entity"
 )
 
 func hit(entity *entity.Entity, entityHit *entity.Entity) {
@@ -12,35 +12,35 @@ func hit(entity *entity.Entity, entityHit *entity.Entity) {
 		if entityHit.HasComponent("HealthComponent") {
 			damage := 1
 			if entityHit.HasComponent("DamageComponent") {
-				dc := entityHit.GetComponent("DamageComponent").(*component.DamageComponent)
+				dc := entityHit.GetComponent("DamageComponent").(*components.DamageComponent)
 				damage = dc.Amount
 			}
-			ehc := entityHit.GetComponent("HealthComponent").(*component.HealthComponent)
+			ehc := entityHit.GetComponent("HealthComponent").(*components.HealthComponent)
 			if ehc.Health > 0 {
 				ehc.Health -= damage
 			}
 		}
 
 		//Create visual of attack
-		entityHit.AddComponent(&component.AttackComponent{SpriteX: 192, SpriteY: 80})
+		entityHit.AddComponent(&components.AttackComponent{SpriteX: 192, SpriteY: 80})
 
 		// Trigger their defenses
 		if entityHit.HasComponent("DefensiveAIComponent") {
-			daic := entityHit.GetComponent("DefensiveAIComponent").(*component.DefensiveAIComponent)
-			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+			daic := entityHit.GetComponent("DefensiveAIComponent").(*components.DefensiveAIComponent)
+			pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 			daic.Attacked = true
 			daic.AttackerX = pc.GetX()
 			daic.AttackerY = pc.GetY()
 		}
 
 		if !entityHit.HasComponent("AlertedComponent") {
-			entityHit.AddComponent(&component.AlertedComponent{Duration: 120})
+			entityHit.AddComponent(&components.AlertedComponent{Duration: 120})
 		}
 
 		if entity.HasComponent("PoisonousComponent") {
 			if !entityHit.HasComponent("PoisonedComponent") {
-				poisonousComponent := entity.GetComponent("PoisonousComponent").(*component.PoisonousComponent)
-				entityHit.AddComponent(&component.PoisonedComponent{Duration: poisonousComponent.Duration})
+				poisonousComponent := entity.GetComponent("PoisonousComponent").(*components.PoisonousComponent)
+				entityHit.AddComponent(&components.PoisonedComponent{Duration: poisonousComponent.Duration})
 			}
 		}
 	}
@@ -50,7 +50,7 @@ func hit(entity *entity.Entity, entityHit *entity.Entity) {
 func eat(entity *entity.Entity, entityHit *entity.Entity) bool {
 	if entityHit != entity {
 		if entityHit.HasComponent("FoodComponent") {
-			fc := entityHit.GetComponent("FoodComponent").(*component.FoodComponent)
+			fc := entityHit.GetComponent("FoodComponent").(*components.FoodComponent)
 			fc.Amount--
 			return true
 		}
@@ -59,7 +59,7 @@ func eat(entity *entity.Entity, entityHit *entity.Entity) bool {
 }
 
 func face(entity *entity.Entity, deltaX int, deltaY int) {
-	dc := entity.GetComponent("DirectionComponent").(*component.DirectionComponent)
+	dc := entity.GetComponent("DirectionComponent").(*components.DirectionComponent)
 	if deltaY > 0 {
 		dc.Direction = 1
 	}
@@ -76,9 +76,9 @@ func face(entity *entity.Entity, deltaX int, deltaY int) {
 
 func handleDeath(entity *entity.Entity) bool {
 	if entity.HasComponent("HealthComponent") {
-		hc := entity.GetComponent("HealthComponent").(*component.HealthComponent)
+		hc := entity.GetComponent("HealthComponent").(*components.HealthComponent)
 		if hc.Health <= 0 {
-			entity.AddComponent(&component.DeadComponent{})
+			entity.AddComponent(&components.DeadComponent{})
 
 			return true
 		}
@@ -88,7 +88,7 @@ func handleDeath(entity *entity.Entity) bool {
 
 //Returns true if a solid entity is in the way.
 func move(entity *entity.Entity, level *world.Level, deltaX int, deltaY int) bool {
-	pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+	pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 	entityHit := level.GetSolidEntityAt(pc.GetX()+deltaX, pc.GetY()+deltaY)
 	if entityHit == nil {
 		tile := level.GetTileAt(pc.GetX()+deltaX, pc.GetY()+deltaY)
@@ -101,7 +101,7 @@ func move(entity *entity.Entity, level *world.Level, deltaX int, deltaY int) boo
 	} else {
 		//If we are massive we destroy what we moved into if it's not also massive.
 		if entity.HasComponent("MassiveComponent") && !entityHit.HasComponent("MassiveComponent") {
-			entityHit.AddComponent(&component.DeadComponent{})
+			entityHit.AddComponent(&components.DeadComponent{})
 		}
 	}
 	return true

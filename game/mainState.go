@@ -6,13 +6,13 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/jaeg/cool_game/component"
+	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/config"
-	"github.com/jaeg/cool_game/entity"
-	"github.com/jaeg/cool_game/resource"
 	"github.com/jaeg/cool_game/system"
-	"github.com/jaeg/cool_game/ui"
 	"github.com/jaeg/cool_game/world"
+	"github.com/jaeg/game-engine/entity"
+	"github.com/jaeg/game-engine/resource"
+	"github.com/jaeg/game-engine/ui"
 )
 
 type MainState struct {
@@ -154,10 +154,10 @@ func (s *MainState) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x fl
 	//Draw entity on tile.
 	if entity != nil {
 		if entity.HasComponent("AppearanceComponent") {
-			ac := entity.GetComponent("AppearanceComponent").(*component.AppearanceComponent)
+			ac := entity.GetComponent("AppearanceComponent").(*components.AppearanceComponent)
 			dir := 0
 			if entity.HasComponent("DirectionComponent") {
-				dc := entity.GetComponent("DirectionComponent").(*component.DirectionComponent)
+				dc := entity.GetComponent("DirectionComponent").(*components.DirectionComponent)
 				dir = dc.Direction
 			}
 
@@ -179,7 +179,7 @@ func (s *MainState) DrawEntity(screen *ebiten.Image, entity *entity.Entity, x fl
 
 			//Draw FX
 			if entity.HasComponent("AttackComponent") {
-				attackC := entity.GetComponent("AttackComponent").(*component.AttackComponent)
+				attackC := entity.GetComponent("AttackComponent").(*components.AttackComponent)
 				if attackC.Frame == 3 {
 					entity.RemoveComponent("AttackComponent")
 				} else {

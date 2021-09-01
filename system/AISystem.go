@@ -3,9 +3,9 @@ package system
 import (
 	"math/rand"
 
-	"github.com/jaeg/cool_game/component"
-	"github.com/jaeg/cool_game/entity"
+	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/world"
+	"github.com/jaeg/game-engine/entity"
 
 	"github.com/beefsack/go-astar"
 )
@@ -21,7 +21,7 @@ type AISystem struct {
 func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 	if !entity.HasComponent("DeadComponent") {
 		if entity.HasComponent("MyTurnComponent") {
-			pc := entity.GetComponent("PositionComponent").(*component.PositionComponent)
+			pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 
 			if handleDeath(entity) {
 				return
@@ -41,7 +41,7 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 
 			//Hostile AI
 			if entity.HasComponent("HostileAIComponent") {
-				hc := entity.GetComponent("HostileAIComponent").(*component.HostileAIComponent)
+				hc := entity.GetComponent("HostileAIComponent").(*components.HostileAIComponent)
 				deltaX := 0
 				deltaY := 0
 
@@ -55,8 +55,8 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 							friendly := false
 							if entity.HasComponent("DescriptionComponent") {
 								if nearby[e].HasComponent("DescriptionComponent") {
-									myDC := entity.GetComponent("DescriptionComponent").(*component.DescriptionComponent)
-									hitDC := nearby[e].GetComponent("DescriptionComponent").(*component.DescriptionComponent)
+									myDC := entity.GetComponent("DescriptionComponent").(*components.DescriptionComponent)
+									hitDC := nearby[e].GetComponent("DescriptionComponent").(*components.DescriptionComponent)
 
 									if myDC.Faction != "none" && myDC.Faction != "" {
 										if myDC.Faction == hitDC.Faction {
@@ -67,7 +67,7 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 								}
 							}
 							if !friendly {
-								foodPC := nearby[e].GetComponent("PositionComponent").(*component.PositionComponent)
+								foodPC := nearby[e].GetComponent("PositionComponent").(*components.PositionComponent)
 								if (nearby[e].HasComponent("FoodComponent") || nearby[e].HasComponent("GoblinAIComponent")) && !nearby[e].HasComponent("DeadComponent") {
 									tDistance := level.GetTileAt(pc.GetX(), pc.GetY()).PathEstimatedCost(level.GetTileAt(foodPC.GetX(), foodPC.GetY()))
 									if tDistance < distance {
@@ -81,7 +81,7 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 					}
 
 					if closest != entity {
-						foodPC := closest.GetComponent("PositionComponent").(*component.PositionComponent)
+						foodPC := closest.GetComponent("PositionComponent").(*components.PositionComponent)
 						hc.TargetX = foodPC.GetX()
 						hc.TargetY = foodPC.GetY()
 						steps, _, _ := astar.Path(level.GetTileAt(pc.GetX(), pc.GetY()), level.GetTileAt(hc.TargetX, hc.TargetY))
@@ -130,7 +130,7 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 
 			//Defensive AI
 			if entity.HasComponent("DefensiveAIComponent") {
-				aic := entity.GetComponent("DefensiveAIComponent").(*component.DefensiveAIComponent)
+				aic := entity.GetComponent("DefensiveAIComponent").(*components.DefensiveAIComponent)
 
 				if aic.Attacked {
 					entityHit := level.GetSolidEntityAt(aic.AttackerX, aic.AttackerY)

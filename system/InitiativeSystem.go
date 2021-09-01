@@ -1,9 +1,9 @@
 package system
 
 import (
-	"github.com/jaeg/cool_game/component"
-	"github.com/jaeg/cool_game/entity"
+	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/world"
+	"github.com/jaeg/game-engine/entity"
 )
 
 type InitiativeSystem struct {
@@ -13,7 +13,7 @@ type InitiativeSystem struct {
 func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) {
 
 	if entity.HasComponent("InitiativeComponent") {
-		ic := entity.GetComponent("InitiativeComponent").(*component.InitiativeComponent)
+		ic := entity.GetComponent("InitiativeComponent").(*components.InitiativeComponent)
 		ic.Ticks--
 
 		if ic.Ticks <= 0 {
@@ -47,7 +47,7 @@ func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) {
 				}
 
 				if canGo {
-					mTC := &component.MyTurnComponent{}
+					mTC := &components.MyTurnComponent{}
 					entity.AddComponent(mTC)
 				}
 			}

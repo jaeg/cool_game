@@ -5,9 +5,9 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jaeg/cool_game/config"
-	"github.com/jaeg/cool_game/resource"
-	"github.com/jaeg/cool_game/state"
-	"github.com/jaeg/cool_game/ui"
+	"github.com/jaeg/game-engine/resource"
+	"github.com/jaeg/game-engine/state"
+	"github.com/jaeg/game-engine/ui"
 )
 
 // Main gui

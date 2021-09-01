@@ -1,7 +1,7 @@
 package system
 
 import (
-	"github.com/jaeg/cool_game/component"
+	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/world"
 )
 
@@ -17,7 +17,7 @@ func (s CleanUpSystem) Update(level *world.Level) {
 
 		if entity.HasComponent("DeadComponent") {
 			if entity.HasComponent("FoodComponent") {
-				fc := entity.GetComponent("FoodComponent").(*component.FoodComponent)
+				fc := entity.GetComponent("FoodComponent").(*components.FoodComponent)
 				if fc.Amount <= 0 {
 					level.RemoveEntity(entity)
 				}
