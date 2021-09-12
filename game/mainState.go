@@ -8,21 +8,22 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/config"
-	"github.com/jaeg/cool_game/system"
+	"github.com/jaeg/cool_game/systems"
 	"github.com/jaeg/cool_game/world"
 	"github.com/jaeg/game-engine/entity"
 	"github.com/jaeg/game-engine/resource"
+	"github.com/jaeg/game-engine/system"
 	"github.com/jaeg/game-engine/ui"
 )
 
 type MainState struct {
-	level   *world.Level
-	CameraX int
-	CameraY int
-	keys    []ebiten.Key
-	gui     *ui.GUI
-	systems []system.System
-	gm      *GameMaster
+	level         *world.Level
+	CameraX       int
+	CameraY       int
+	keys          []ebiten.Key
+	gui           *ui.GUI
+	systemManager *system.SystemManager
+	gm            *GameMaster
 }
 
 func NewMainState() (*MainState, error) {
@@ -30,20 +31,18 @@ func NewMainState() (*MainState, error) {
 	mainView := &GUIViewMain{}
 
 	mainView.AddButton(b)
-	s := &MainState{gui: ui.NewGUI(mainView)}
+	s := &MainState{gui: ui.NewGUI(mainView), systemManager: &system.SystemManager{}}
 
 	s.level = world.NewOverworldSection(config.WorldGenSizeW, config.WorldGenSizeH)
 
-	s.systems = make([]system.System, 0)
-
 	//Initiative System
-	s.systems = append(s.systems, system.InitiativeSystem{})
+	s.systemManager.AddSystem(systems.InitiativeSystem{})
 
 	//AI System
-	s.systems = append(s.systems, system.AISystem{})
+	s.systemManager.AddSystem(systems.AISystem{})
 
 	//StatusCondition System
-	s.systems = append(s.systems, system.StatusConditionSystem{})
+	s.systemManager.AddSystem(systems.StatusConditionSystem{})
 
 	s.gm = &GameMaster{}
 	s.gm.Init(s.level)
@@ -81,11 +80,9 @@ func (s *MainState) Update() {
 	ebiten.SetWindowTitle(config.Title + " FPS: " + strconv.FormatFloat(fps, 'f', 1, 64))
 	s.gm.Update()
 	for _, entity := range s.level.Entities {
-		for system := range s.systems {
-			s.systems[system].Update(s.level, entity)
-		}
+		s.systemManager.UpdateSystemsForEntity(s.level, entity)
 	}
-	cs := system.CleanUpSystem{}
+	cs := systems.CleanUpSystem{}
 	cs.Update(s.level)
 }
 

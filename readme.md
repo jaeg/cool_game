@@ -14,3 +14,7 @@ After installing ebiten dependencies you'll need to run the following command to
 `make run`
 
 `make build`
+
+To test with a local copy of the game-engine library add this to the mod file replacing the path/to/game_engine with the location of your copy:
+
+`replace github.com/jaeg/game-engine => /path/to/game_engine`

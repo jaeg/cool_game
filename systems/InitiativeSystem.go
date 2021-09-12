@@ -1,4 +1,4 @@
-package system
+package systems
 
 import (
 	"github.com/jaeg/cool_game/components"
@@ -10,8 +10,8 @@ type InitiativeSystem struct {
 }
 
 // InitiativeSystem .
-func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) {
-
+func (s InitiativeSystem) Update(levelInterface interface{}, entity *entity.Entity) error {
+	level := levelInterface.(*world.Level)
 	if entity.HasComponent("InitiativeComponent") {
 		ic := entity.GetComponent("InitiativeComponent").(*components.InitiativeComponent)
 		ic.Ticks--
@@ -53,4 +53,6 @@ func (s InitiativeSystem) Update(level *world.Level, entity *entity.Entity) {
 			}
 		}
 	}
+
+	return nil
 }

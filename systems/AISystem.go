@@ -1,13 +1,12 @@
-package system
+package systems
 
 import (
 	"math/rand"
 
+	"github.com/beefsack/go-astar"
 	"github.com/jaeg/cool_game/components"
 	"github.com/jaeg/cool_game/world"
 	"github.com/jaeg/game-engine/entity"
-
-	"github.com/beefsack/go-astar"
 )
 
 func getRandom(low int, high int) int {
@@ -18,13 +17,14 @@ type AISystem struct {
 }
 
 // PlayerSystem .
-func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
+func (s AISystem) Update(levelInterface interface{}, entity *entity.Entity) error {
+	level := levelInterface.(*world.Level)
 	if !entity.HasComponent("DeadComponent") {
 		if entity.HasComponent("MyTurnComponent") {
 			pc := entity.GetComponent("PositionComponent").(*components.PositionComponent)
 
 			if handleDeath(entity) {
-				return
+				return nil
 			}
 
 			//Wander AI
@@ -167,4 +167,6 @@ func (s AISystem) Update(level *world.Level, entity *entity.Entity) {
 			}
 		}
 	}
+
+	return nil
 }
