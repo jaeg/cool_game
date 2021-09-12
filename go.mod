@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210727001814-0db043d8d5be // indirect
-	github.com/jaeg/game-engine v0.0.0-20210901230743-746928d84a6e
+	github.com/jaeg/game-engine v0.0.0-20210902202002-e5e23a8a0070
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 )
 
@@ -27,4 +27,5 @@ require (
 	golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
-replace github.com/jaeg/game-engine => /Users/johngodsey/repos/game_engine
+
+replace github.com/jaeg/game-engine => ../game_engine

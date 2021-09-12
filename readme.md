@@ -15,6 +15,6 @@ After installing ebiten dependencies you'll need to run the following command to
 
 `make build`
 
-To test with a local copy of the game-engine library add this to the mod file replacing the path/to/game_engine with the location of your copy:
+To test with a local copy of the game-engine library add this to the mod file.  It assumes that game_engine was cloned in the same parent directory as this repo. 
 
-`replace github.com/jaeg/game-engine => /path/to/game_engine`
+`replace github.com/jaeg/game-engine => ../game_engine`
